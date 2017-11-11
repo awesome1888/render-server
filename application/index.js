@@ -23,7 +23,7 @@ class Application extends BaseApplication
 
     processHome(req, res)
     {
-        res.end('Arrows from the sky!');
+        res.asText().send('Arrows from the sky!').end();
     }
 }
 
