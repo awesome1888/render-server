@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
+"use strict";
+
 const http = require('http');
-const config = require('./config.js');
+const config = require('./config.sample.js');
 
 let Application = require('./application/index.js');
 
