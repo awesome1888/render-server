@@ -1,13 +1,13 @@
 {
-  "name": "render-server",
+  "name": "ssr.server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.es6",
   "scripts": {
-    "start": "node index.js",
+    "start": "node index.es6",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Sergei Gannochenko",
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.18.2",
