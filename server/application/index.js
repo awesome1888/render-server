@@ -1,7 +1,7 @@
 "use strict";
 
 let BaseApplication = require('../lib/application/index.js');
-let config = require('../config.sample.js');
+let config = require('../config.js');
 let _ = require('../lib/_.js');
 
 let fs = require('fs');

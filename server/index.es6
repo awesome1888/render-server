@@ -1,11 +1,7 @@
-#!/usr/bin/env node
-
-"use strict";
-
-const http = require('http');
-const config = require('./config.sample.js');
-
-let Application = require('./application/index.js');
+import config from './config.js';
+import Application from './application/index.js';
+import os from 'os';
+import cluster from 'cluster';
 
 const launchApp = () => {
     // creating worker application, it will share all tcp connections
@@ -15,8 +11,7 @@ const launchApp = () => {
 
 if (config.useCluster)
 {
-    const numCPUs = require('os').cpus().length;
-    const cluster = require('cluster');
+    const numCPUs = os.cpus().length;
 
     if (cluster.isMaster)
     {
