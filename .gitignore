@@ -3,4 +3,3 @@ node_modules/
 *.tar.gz
 .idea/
 build/
-config.js
