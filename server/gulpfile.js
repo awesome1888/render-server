@@ -5,6 +5,7 @@ const less = require('gulp-less');
 const path = require('path');
 const plumber = require('gulp-plumber');
 const spawn = require('child_process').spawn;
+const vfs = require('vinyl-fs');
 
 const srcFolder = './';
 const srcFolderServer = srcFolder+'server';
@@ -44,10 +45,10 @@ gulp.task('compileEs6Client', ['cleanClient'], function() {
 
 // copy the other client js (plain)
 gulp.task('copyJsClient', ['cleanClient'], function() {
-    return gulp.src([
+    // vfs follows symlinks
+    return vfs.src([
         srcFolderClient+'/**/*.js',
-        // 'node_modules/jquery/dist/jquery.slim.js'
-    ]).pipe(gulp.dest(dstFolderClient));
+    ]).pipe(vfs.dest(dstFolderClient));
 });
 
 // compile less
@@ -95,9 +96,8 @@ gulp.task('compileEs6Server', ['cleanServer'], function() {
 
 // copy the other client js (plain)
 gulp.task('copyJsServer', ['cleanServer'], function() {
-    return gulp.src([
-        srcFolderServer+'/**/*.js',
-    ]).pipe(gulp.dest(dstFolderServer));
+    // vfs follows symlinks
+    return vfs.src(srcFolderServer+'/**/*.js').pipe(vfs.dest(dstFolderServer));
 });
 
 // run the server
