@@ -1,12 +1,4 @@
-/**
- * Usage:
- * phantomjs grab-colors.js
- *
- * Read:
- * http://phantomjs.org/
- */
-
-var fs = require('fs');
+import fs from 'fs';
 var system = require('system');
 var webpage = require('webpage');
 
@@ -69,3 +61,32 @@ page.open(url, function(status) {
     //     phantom.exit();
     // });
 });
+
+// const puppeteer = require('puppeteer');
+// const fs = require('fs');
+//
+// (() => {
+//     let b = null;
+//     let p = null;
+//
+//     puppeteer.launch().then((browser) => {
+//         b = browser;
+//         return browser.newPage();
+//     }).then((page) => {
+//         p = page;
+//         return page.goto('https://foreignsky.ru/pzwfCkCN2KmjRRERX');
+//     }).then(() => {
+//         return new Promise((resolve) => {
+//             setTimeout(() => {
+//                 // p.screenshot({path: 'example.png'}).then(() => {resolve()});
+//                 p.content().then((data) => {
+//                     fs.writeFileSync('index.html', data);
+//                     resolve();
+//                 });
+//
+//             }, 1000);
+//         });
+//     }).then(() => {
+//         b.close();
+//     });
+// })();
