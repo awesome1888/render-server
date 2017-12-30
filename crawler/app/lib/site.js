@@ -1,4 +1,4 @@
-import SitemapParser from '../lib/sitemap/index.js';
+import SitemapGetter from 'sitemap-getter';
 import process from 'process';
 
 export default class Site
@@ -13,12 +13,11 @@ export default class Site
         // const stream = await SitemapParser.createStream(`${this._address}/sitemap.xml`);
         // console.dir('rock n roll');
         // stream.on('data', (data) => {
-        //     console.dir('data!');
         //     console.dir(data);
         // });
 
         // const data = await SitemapParser.get(`${this._address}/sitemap.xml`);
-        const data = await SitemapParser.get(`https://foreignsky.ru/sitemap.xml`);
+        const data = await SitemapGetter.getLocations(`https://foreignsky.ru/sitemap.xml`);
         console.dir(data);
 
         // const hz = new Sitemapper({
