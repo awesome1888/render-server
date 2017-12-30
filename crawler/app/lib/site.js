@@ -20,17 +20,17 @@ export default class Site
         const timeout = !isNaN(parameters.timeout) ? parameters.timeout : 5000;
         const cacheFolder = parameters.cacheFolder;
 
-        let data;
+        let locations;
         try
         {
-            data = await SitemapGetter.getLocations(`${this._address}/sitemap.xml`);
+            locations = await SitemapGetter.getLocations(`${this._address}/sitemap.xml`);
         }
         catch(e)
         {
             return;
         }
 
-        if (!_.isArrayNotEmpty(data))
+        if (!_.isArrayNotEmpty(locations))
         {
             return;
         }
@@ -70,10 +70,10 @@ export default class Site
             }
         });
 
-        for(let k = 0; k < data.length; k++)
+        for(let k = 0; k < locations.length; k++)
         {
             ready = false;
-            const location = data[k].loc;
+            const location = locations[k].loc;
 
             try
             {
