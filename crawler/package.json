@@ -9,6 +9,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "md5": "^2.2.1",
     "puppeteer": "^0.13.0",
     "sitemap-getter": "^1.0.0",
     "underscore": "^1.8.3"
