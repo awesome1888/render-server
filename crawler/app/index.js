@@ -23,8 +23,7 @@ puppeteer.launch().then(async (browser) => {
             cacheFolder,
         });
         return site.crawl(browser).catch((e) => {
-            console.dir(`Website ${address} errored`);
-            console.dir(e);
+            console.dir(`Website ${address} -> ERROR: ${e.message}`);
         });
     }));
 
