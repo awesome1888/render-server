@@ -19,9 +19,10 @@ gulp.task('cleanServer', function() {
         .pipe(clean());
 });
 
-// compile server js (es6)
+// compile server js
 gulp.task('compileEs6Server', ['cleanServer'], function() {
-    return gulp.src(srcFolderServer+'/**/*.es6')
+    // vfs follows symlinks
+    return vfs.src(srcFolderServer+'/**/*.js')
         .pipe(plumber())
         .pipe(babel({
             presets: [
@@ -33,20 +34,20 @@ gulp.task('compileEs6Server', ['cleanServer'], function() {
                 }],
             ]
         }))
-        .pipe(gulp.dest(dstFolderServer));
+        .pipe(vfs.dest(dstFolderServer));
 });
 
-// copy the other client js (plain)
-gulp.task('copyJsServer', ['cleanServer'], function() {
-    // vfs follows symlinks
-    console.dir(srcFolderServer+'/**/*.js');
-    return vfs.src([
-        srcFolderServer+'/**/*.js',
-    ]).pipe(vfs.dest(dstFolderServer));
-});
+// // copy the other client js (plain)
+// gulp.task('copyJsServer', ['cleanServer'], function() {
+//     // vfs follows symlinks
+//     return vfs.src(srcFolderServer+'/**/*.js').pipe(vfs.dest(dstFolderServer));
+// });
 
 ///////////////////
 // Root tasks
 
-gulp.task('buildServer', ['compileEs6Server', 'copyJsServer']);
-gulp.task('default', ['buildServer']);
+gulp.task('watch', function() {
+    gulp.watch([srcFolderServer+'/**/*'], ['buildServer']);
+});
+gulp.task('buildServer', ['compileEs6Server']);
+gulp.task('default', ['buildServer', 'watch']);

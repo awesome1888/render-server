@@ -7,6 +7,6 @@ module.exports = {
 
     // todo: later move to the database
     targets: [
-        'http://foreignsky.ru',
+        'https://foreignsky.ru',
     ],
 };

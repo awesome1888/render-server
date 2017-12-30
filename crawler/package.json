@@ -9,7 +9,9 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "puppeteer": "^0.13.0"
+    "puppeteer": "^0.13.0",
+    "sax": "^1.2.4",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
