@@ -77,8 +77,12 @@ export default class Site
 
             try
             {
-                await page.goto(location);
-
+                const response = await page.goto(location);
+                if (response.status !== 200)
+                {
+                    throw new Error(`HTTP: ${response.status}`);
+                }
+                
                 // wait until the content is ready
                 await new Promise((resolve) => {
                     if (ready)
