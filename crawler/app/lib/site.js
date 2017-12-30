@@ -10,12 +10,16 @@ export default class Site
 
     async crawl(browser)
     {
-        const stream = await SitemapParser.createStream(`${this._address}/sitemap.xml`);
+        // const stream = await SitemapParser.createStream(`${this._address}/sitemap.xml`);
+        // console.dir('rock n roll');
+        // stream.on('data', (data) => {
+        //     console.dir('data!');
+        //     console.dir(data);
+        // });
 
-        stream.on('data', (data) => {
-            console.dir('data!');
-            console.dir(data);
-        });
+        // const data = await SitemapParser.get(`${this._address}/sitemap.xml`);
+        const data = await SitemapParser.get(`https://foreignsky.ru/sitemap.xml`);
+        console.dir(data);
 
         // const hz = new Sitemapper({
         //     url: `${this._address}/sitemap.xml`,

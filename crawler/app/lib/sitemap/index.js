@@ -5,9 +5,6 @@ import _ from 'lodash';
 
 import ResultStream from './lib/stream.js';
 
-// https://stackoverflow.com/questions/19277094/how-to-close-a-readable-stream-before-end
-// https://www.npmjs.com/package/destroy
-
 export default class SitemapParser
 {
     static async createStream(url, parameters = {})
@@ -21,14 +18,36 @@ export default class SitemapParser
         }, parameters);
 
         response.pipe(saxStream);
-        saxStream.on('data', () => {}); // full steam ahead!
+        response.on('end', () => {
+            response.unpipe();
+            response.destroy();
+        });
 
         return result;
     }
 
-    static get(url)
+    static async get(url, parameters = {})
     {
+        parameters = _.isObject(parameters) ? parameters : {};
 
+        const response = await this.getResponseStream(url, parameters);
+        const result = [];
+        const saxStream = this.getSaxStream((entry) => {
+            result.push(entry);
+        }, parameters);
+
+        response.pipe(saxStream);
+        response.on('end', () => {
+            response.unpipe();
+            response.destroy();
+        });
+
+        return new Promise((resolve) => {
+            saxStream.on('end', () => {
+                resolve(result);
+            });
+            saxStream.on('data', () => {}); // full steam ahead! get all of them!
+        });
     }
 
     static getSaxStream(onEntry, parameters = {})
@@ -36,14 +55,14 @@ export default class SitemapParser
         const saxStream = sax.createStream(true, {
             normalize: true,
         });
-        // saxStream.on("error", function (e) {
-        //     // unhandled errors will throw, since this is a proper node
-        //     // event emitter.
-        //     console.error("error!", e)
-        //     // clear the error
-        //     this._parser.error = null
-        //     this._parser.resume()
-        // });
+
+        if (parameters.skipParseErrors)
+        {
+            saxStream.on("error", function (e) {
+                this._parser.error = null;
+                this._parser.resume();
+            });
+        }
 
         let entry = null;
         let tag = null;
@@ -103,7 +122,7 @@ export default class SitemapParser
     static async getResponseStream(url, parameters = {})
     {
         return new Promise((resolve, reject) => {
-            const request = https.get(url, (response) => {
+            const request = this.getAPIByUrl(url).get(url, (response) => {
                 // todo: support 301 and 302 redirects here
                 if (response.statusCode.toString() !== '200')
                 {
@@ -125,5 +144,26 @@ export default class SitemapParser
                 reject(error);
             });
         });
+    }
+
+    static getAPIByUrl(url)
+    {
+        url = this.normalizeUrl(url);
+        if (!url.length)
+        {
+            throw new RangeError('Bad url');
+        }
+
+        return url.startsWith('https:') ? https : http;
+    }
+
+    static normalizeUrl(url)
+    {
+        if (!_.isString(url))
+        {
+            return '';
+        }
+
+        return url.trim();
     }
 }
