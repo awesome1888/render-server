@@ -2,7 +2,8 @@ import sax from 'sax';
 import https from 'https';
 import http from 'http';
 import _ from 'lodash';
-import {Duplex} from 'stream';
+
+import ResultStream from './lib/stream.js';
 
 // https://stackoverflow.com/questions/19277094/how-to-close-a-readable-stream-before-end
 // https://www.npmjs.com/package/destroy
@@ -15,11 +16,38 @@ export default class SitemapParser
 
         const response = await this.getResponseStream(url, parameters);
         const result = this.getResultStream();
+        const saxStream = this.getSaxStream((entry) => {
+            result.write(entry);
+        }, parameters);
+
+        response.pipe(saxStream);
+        saxStream.on('data', () => {}); // full steam ahead!
+
+        return result;
+    }
+
+    static get(url)
+    {
+
+    }
+
+    static getSaxStream(onEntry, parameters = {})
+    {
+        const saxStream = sax.createStream(true, {
+            normalize: true,
+        });
+        // saxStream.on("error", function (e) {
+        //     // unhandled errors will throw, since this is a proper node
+        //     // event emitter.
+        //     console.error("error!", e)
+        //     // clear the error
+        //     this._parser.error = null
+        //     this._parser.resume()
+        // });
 
         let entry = null;
         let tag = null;
 
-        const saxStream = this.createSaxStream();
         saxStream.on('opentag', (node) => {
             if (node.name === 'url')
             {
@@ -56,7 +84,7 @@ export default class SitemapParser
                 if (entry !== null)
                 {
                     // send to the output stream...
-                    result.write(entry);
+                    onEntry(entry);
                 }
 
                 entry = null;
@@ -64,29 +92,12 @@ export default class SitemapParser
             }
         });
 
-        response.pipe(saxStream);
-        // rock-n-roll
-        saxStream.on('data', () => {});
-
-        return null;
-    }
-
-    static get(url)
-    {
-
+        return saxStream;
     }
 
     static getResultStream()
     {
-        return new Duplex({
-            objectMode: true,
-            // read(size) {
-            //     // ...
-            // },
-            write(chunk, encoding, callback) {
-                // ...
-            }
-        });
+        return new ResultStream();
     }
 
     static async getResponseStream(url, parameters = {})
@@ -114,59 +125,5 @@ export default class SitemapParser
                 reject(error);
             });
         });
-    }
-
-    static async getTransformStream(stream)
-    {
-        return new Promise((resolve) => {
-            stream.pipe(new Transform({
-                objectMode: true,
-                transform(record, encoding, callback) {
-                    fName = record['First Name'];
-                    lName = record['Last Name'];
-                    name = (`${fName} ${lName}`).trim();
-
-                    cnt += 1;
-
-                    callback(null, {
-                        type: 'update',
-                        operation: {
-                            filter: {
-                                nameBot,
-                                name,
-                            },
-                            data: {
-                                $set: {
-                                    email: record['Email Address'],
-                                    company: record.Company,
-                                    position: record.Position,
-                                },
-                            },
-                        },
-                    });
-                }
-            })).pipe(this.getContext().getStream()).on('finish', () => {
-                this.getContext().flush(); // the last flush
-                // this.log(`Bot ${nameBot} finished, ${cnt} records updated`);
-                resolve({count: cnt});
-            });
-        });
-    }
-
-    static createSaxStream()
-    {
-        const saxStream = sax.createStream(true, {
-            normalize: true,
-        });
-        // saxStream.on("error", function (e) {
-        //     // unhandled errors will throw, since this is a proper node
-        //     // event emitter.
-        //     console.error("error!", e)
-        //     // clear the error
-        //     this._parser.error = null
-        //     this._parser.resume()
-        // })
-
-        return saxStream;
     }
 }

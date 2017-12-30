@@ -12,7 +12,10 @@ export default class Site
     {
         const stream = await SitemapParser.createStream(`${this._address}/sitemap.xml`);
 
-        // stream.pipe(process.stdout);
+        stream.on('data', (data) => {
+            console.dir('data!');
+            console.dir(data);
+        });
 
         // const hz = new Sitemapper({
         //     url: `${this._address}/sitemap.xml`,
