@@ -1,5 +1,5 @@
 import SitemapGetter from 'sitemap-getter';
-import process from 'process';
+import _ from './_.js';
 
 export default class Site
 {
@@ -10,46 +10,40 @@ export default class Site
 
     async crawl(browser)
     {
-        // const stream = await SitemapParser.createStream(`${this._address}/sitemap.xml`);
-        // console.dir('rock n roll');
-        // stream.on('data', (data) => {
-        //     console.dir(data);
+        let data;
+        try
+        {
+            data = await SitemapGetter.getLocations(`${this._address}/sitemap.xml`);
+        }
+        catch(e)
+        {
+            return;
+        }
+
+        if (!_.isArrayNotEmpty(data))
+        {
+            return;
+        }
+
+        // We do not create several pages in parallel, it could increase
+        // the memory usage which we cant afford on the weak hosing.
+        // Parsing several pages "in parallel" could be faster though.
+        const page = await browser.newPage();
+        await page.setUserAgent('render-server');
+
+        // page.on('console', msg => {
+        //     for (let i = 0; i < msg.args.length; ++i)
+        //         console.log(`${i}: ${msg.args[i]}`);
         // });
 
-        // const data = await SitemapParser.get(`${this._address}/sitemap.xml`);
-        const data = await SitemapGetter.getLocations(`https://foreignsky.ru/sitemap.xml`);
-        console.dir(data);
-
-        // const hz = new Sitemapper({
-        //     url: `${this._address}/sitemap.xml`,
-        //     timeout: 15000, // 15 seconds
-        // });
-        //
-        // const map  = await hz.fetch();
-        //
-        // console.dir(map);
-
-        // hz.fetch()
-        //     .then(data => console.log(data.sites))
-        //     .catch(error => console.log(error));
-
-
-        // first, get sitemap
-        // const map = await new Promise((resolve, reject) => {
-        //     sitemaps.parseSitemaps(`${this._address}/sitemap.xml`, console.log, (err, map) => {
-        //         if (err)
-        //         {
-        //             reject(err);
-        //         }
-        //         else
-        //         {
-        //             console.dir(map);
-        //             resolve(map);
-        //         }
-        //     });
-        // });
-
-        // console.dir(map);
+        for(let k = 0; k < data.length; k++)
+        {
+            const location = data[k].loc;
+            console.dir('Going '+location);
+            await page.goto(location);
+            const content = await page.content();
+            console.dir('crawled '+location);
+        }
 
         return 1;
     }

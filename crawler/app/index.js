@@ -15,7 +15,10 @@ const puppeteer = require('puppeteer');
 puppeteer.launch().then(async (browser) => {
     await Promise.all(sites.map((address) => {
         const site = new Site(address);
-        return site.crawl(browser);
+        return site.crawl(browser).catch((e) => {
+            console.dir(`Website ${address} errored`);
+            console.dir(e);
+        });
     }));
 
     browser.close();
