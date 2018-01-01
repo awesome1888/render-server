@@ -1,6 +1,6 @@
 "use strict";
 
-var _ = require('underscore');
+let _ = require('underscore');
 
 _.mixin({
     /**
@@ -8,7 +8,7 @@ _.mixin({
      * @param {*} value
      * @returns {boolean}
      */
-    isStringNotEmpty: function isStringNotEmpty(value) {
+    isStringNotEmpty: function (value) {
         return _.isString(value) && value.length > 0;
     },
 
@@ -33,8 +33,8 @@ _.mixin({
     makeMap(data, field, unsetKey) {
         unsetKey = unsetKey || false;
         if (_.isArrayNotEmpty(data)) {
-            return data.reduce(function (result, item) {
-                var key = item[field];
+            return data.reduce((result, item) => {
+                const key = item[field];
                 if (unsetKey) {
                     delete item[field];
                 }
@@ -49,7 +49,7 @@ _.mixin({
     getValue(obj, path) {
         if (typeof obj === 'undefined' || obj === null) return;
         path = path.split(/[\.\[\]\"\']{1,2}/); // eslint-disable-line
-        for (var i = 0, l = path.length; i < l; i += 1) {
+        for (let i = 0, l = path.length; i < l; i += 1) {
             if (path[i] !== '') {
                 obj = obj[path[i]];
                 if (typeof obj === 'undefined' || obj === null) return;
@@ -83,7 +83,7 @@ _.mixin({
             return {};
         }
 
-        return _.intersection(Object.keys(one), Object.keys(two)).reduce(function (result, key) {
+        return _.intersection(Object.keys(one), Object.keys(two)).reduce((result, key) => {
             result[key] = one[key];
             return result;
         }, {});

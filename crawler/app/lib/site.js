@@ -38,16 +38,16 @@ export default class Site
         const siteFolder = this.makeSiteFolder(cacheFolder);
         await FSHelper.maybeMakeFolder(siteFolder);
 
-        // data = [{
-        //     // this will be normal
-        //     loc: 'http://localhost:3001/bQp9GvxFNnrfqcm8w',
-        // }, {
-        //     loc: 'this.will.be.invalid',
-        // },{
-        //     loc: 'http://localhost:3001/this.will.be.notfound',
-        // },{
-        //     loc: 'http://this.will.be.refused',
-        // }];
+        locations = [{
+            // this will be normal
+            loc: 'http://localhost:3001/bQp9GvxFNnrfqcm8w',
+        }, {
+            loc: 'this.will.be.invalid',
+        },{
+            loc: 'http://localhost:3001/this.will.be.notfound',
+        },{
+            loc: 'http://this.will.be.refused',
+        }];
 
         // We do not create several pages in parallel, it could increase
         // the memory usage which we cant afford on the weak hosing.
@@ -74,6 +74,11 @@ export default class Site
         {
             ready = false;
             const location = locations[k].loc;
+
+            if (!_.isStringNotEmpty(location))
+            {
+                continue;
+            }
 
             try
             {
