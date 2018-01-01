@@ -95,8 +95,7 @@ export default class Site
             {
                 if (_.isDate(locations[k].lastmod))
                 {
-                    console.dir('LM');
-                    // if lastmod is defined, then re-cache if lascached is before lastmod
+                    // if lastmod is defined, then re-cache if lastcached is before lastmod
                     if (!_.isAgo(locations[k].lastmod, 1, items[location]))
                     {
                         continue;
@@ -104,7 +103,6 @@ export default class Site
                 }
                 else
                 {
-                    console.dir('NO LM');
                     // if lastmod not defined, take now and check the gap of 1 day
                     if (!_.isDaysAgo(new Date(), 1, items[location]))
                     {

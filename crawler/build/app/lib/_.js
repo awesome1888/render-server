@@ -108,8 +108,8 @@ _.mixin({
             now = new Date();
         }
 
-        const result = then.getTime() - now.getTime() > range;
-        console.dir(`${then.getTime()} - ${now.getTime()} > ${range} => ${result}`);
+        // const result = then.getTime() - now.getTime() > range;
+        // console.dir(`${then.getTime()} - ${now.getTime()} > ${range} => ${result}`);
 
         return then.getTime() - now.getTime() > range;
     },

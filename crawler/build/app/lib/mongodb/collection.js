@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -24,9 +24,6 @@ class Collection {
                     if (err) {
                         reject(err);
                     } else {
-                        console.dir('RESULT:');
-                        console.dir(items);
-
                         resolve(items);
                     }
                 });

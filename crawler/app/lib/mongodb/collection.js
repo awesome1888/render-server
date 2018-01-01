@@ -20,9 +20,6 @@ export default class Collection
                 }
                 else
                 {
-                    console.dir('RESULT:');
-                    console.dir(items);
-
                     resolve(items);
                 }
             });
