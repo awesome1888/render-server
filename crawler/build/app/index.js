@@ -20,6 +20,10 @@ var _fshelper = require('./lib/fshelper.js');
 
 var _fshelper2 = _interopRequireDefault(_fshelper);
 
+var _connection = require('./lib/mongodb/connection.js');
+
+var _connection2 = _interopRequireDefault(_connection);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
@@ -37,9 +41,13 @@ puppeteer.launch().then((() => {
         const cacheFolder = _config2.default.cacheFolder;
         yield _fshelper2.default.maybeMakeFolder(cacheFolder);
 
+        const connection = yield _connection2.default.make(_config2.default.mongodbURL);
+        const db = connection.getDatabase(_config2.default.mongodbName);
+
         yield Promise.all(sites.map(function (address) {
             const site = new _site2.default(address, {
-                cacheFolder
+                cacheFolder,
+                collection: db.collection('site')
             });
             return site.crawl(browser).catch(function (e) {
                 console.dir(`Website ${address} -> ERROR: ${e.message}`);
@@ -48,6 +56,7 @@ puppeteer.launch().then((() => {
 
         console.dir('Finished');
 
+        connection.disconnect();
         browser.close();
     });
 

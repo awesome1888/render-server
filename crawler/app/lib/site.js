@@ -5,6 +5,8 @@ import SitemapGetter from 'sitemap-getter';
 import _ from './_.js';
 import FSHelper from './fshelper.js';
 
+import Collection from './mongodb/collection.js';
+
 export default class Site
 {
     constructor(address, parameters = {})
@@ -35,19 +37,27 @@ export default class Site
             return;
         }
 
+        const collection = Collection.wrap(this._parameters.collection);
+        const items = (await collection.find({
+            address: this._address,
+        })).reduce((result, item) => {
+            result[item.location] = item.lastCached;
+            return result;
+        }, {});
+
         const siteFolder = this.makeSiteFolder(cacheFolder);
         await FSHelper.maybeMakeFolder(siteFolder);
 
-        locations = [{
-            // this will be normal
-            loc: 'http://localhost:3001/bQp9GvxFNnrfqcm8w',
-        }, {
-            loc: 'this.will.be.invalid',
-        },{
-            loc: 'http://localhost:3001/this.will.be.notfound',
-        },{
-            loc: 'http://this.will.be.refused',
-        }];
+        // locations = [{
+        //     // this will be normal
+        //     loc: 'http://localhost:3001/bQp9GvxFNnrfqcm8w',
+        // }, {
+        //     loc: 'this.will.be.invalid',
+        // },{
+        //     loc: 'http://localhost:3001/this.will.be.notfound',
+        // },{
+        //     loc: 'http://this.will.be.refused',
+        // }];
 
         // We do not create several pages in parallel, it could increase
         // the memory usage which we cant afford on the weak hosing.
@@ -73,11 +83,34 @@ export default class Site
         for(let k = 0; k < locations.length; k++)
         {
             ready = false;
-            const location = locations[k].loc;
+            let location = locations[k].loc;
 
-            if (!_.isStringNotEmpty(location))
+            if (!_.isStringNotEmptyTrimmed(location))
             {
                 continue;
+            }
+
+            location = location.trim();
+            if ((location in items))
+            {
+                if (_.isDate(locations[k].lastmod))
+                {
+                    console.dir('LM');
+                    // if lastmod is defined, then re-cache if lascached is before lastmod
+                    if (!_.isAgo(locations[k].lastmod, 1, items[location]))
+                    {
+                        continue;
+                    }
+                }
+                else
+                {
+                    console.dir('NO LM');
+                    // if lastmod not defined, take now and check the gap of 1 day
+                    if (!_.isDaysAgo(new Date(), 1, items[location]))
+                    {
+                        continue;
+                    }
+                }
             }
 
             try
@@ -140,6 +173,18 @@ export default class Site
                     });
                 });
 
+                await collection.update({
+                    location,
+                }, {
+                    $set: {
+                        address: this._address,
+                        location,
+                        lastCached: new Date(),
+                    },
+                }, {
+                    upsert: true,
+                });
+
                 console.dir(`Location ${location} -> SUCCESS`);
             }
             catch(e)
@@ -164,4 +209,6 @@ export default class Site
     {
         return `${cacheFolder}${md5(this._address)}/`;
     }
+
+
 }

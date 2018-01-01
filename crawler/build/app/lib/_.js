@@ -87,6 +87,35 @@ _.mixin({
             result[key] = one[key];
             return result;
         }, {});
+    },
+
+    isStringNotEmptyTrimmed(value) {
+        if (!_.isString(value)) {
+            return false;
+        }
+
+        value = value.trim();
+
+        return !!value.length;
+    },
+
+    isAgo(then, range, now = null) {
+        if (!_.isDate(then)) {
+            return false;
+        }
+
+        if (!_.isDate(now)) {
+            now = new Date();
+        }
+
+        const result = then.getTime() - now.getTime() > range;
+        console.dir(`${then.getTime()} - ${now.getTime()} > ${range} => ${result}`);
+
+        return then.getTime() - now.getTime() > range;
+    },
+
+    isDaysAgo(then, days, now = null) {
+        return this.isAgo(then, days * 86400000, now);
     }
 });
 

@@ -24,6 +24,10 @@ var _fshelper = require('./fshelper.js');
 
 var _fshelper2 = _interopRequireDefault(_fshelper);
 
+var _collection = require('./mongodb/collection.js');
+
+var _collection2 = _interopRequireDefault(_collection);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
@@ -54,19 +58,27 @@ class Site {
                 return;
             }
 
+            const collection = _collection2.default.wrap(_this._parameters.collection);
+            const items = (yield collection.find({
+                address: _this._address
+            })).reduce(function (result, item) {
+                result[item.location] = item.lastCached;
+                return result;
+            }, {});
+
             const siteFolder = _this.makeSiteFolder(cacheFolder);
             yield _fshelper2.default.maybeMakeFolder(siteFolder);
 
-            locations = [{
-                // this will be normal
-                loc: 'http://localhost:3001/bQp9GvxFNnrfqcm8w'
-            }, {
-                loc: 'this.will.be.invalid'
-            }, {
-                loc: 'http://localhost:3001/this.will.be.notfound'
-            }, {
-                loc: 'http://this.will.be.refused'
-            }];
+            // locations = [{
+            //     // this will be normal
+            //     loc: 'http://localhost:3001/bQp9GvxFNnrfqcm8w',
+            // }, {
+            //     loc: 'this.will.be.invalid',
+            // },{
+            //     loc: 'http://localhost:3001/this.will.be.notfound',
+            // },{
+            //     loc: 'http://this.will.be.refused',
+            // }];
 
             // We do not create several pages in parallel, it could increase
             // the memory usage which we cant afford on the weak hosing.
@@ -89,10 +101,27 @@ class Site {
 
             for (let k = 0; k < locations.length; k++) {
                 ready = false;
-                const location = locations[k].loc;
+                let location = locations[k].loc;
 
-                if (!_3.default.isStringNotEmpty(location)) {
+                if (!_3.default.isStringNotEmptyTrimmed(location)) {
                     continue;
+                }
+
+                location = location.trim();
+                if (location in items) {
+                    if (_3.default.isDate(locations[k].lastmod)) {
+                        console.dir('LM');
+                        // if lastmod is defined, then re-cache if lascached is before lastmod
+                        if (!_3.default.isAgo(locations[k].lastmod, 1, items[location])) {
+                            continue;
+                        }
+                    } else {
+                        console.dir('NO LM');
+                        // if lastmod not defined, take now and check the gap of 1 day
+                        if (!_3.default.isDaysAgo(new Date(), 1, items[location])) {
+                            continue;
+                        }
+                    }
                 }
 
                 try {
@@ -147,6 +176,18 @@ class Site {
                         });
                     });
 
+                    yield collection.update({
+                        location
+                    }, {
+                        $set: {
+                            address: _this._address,
+                            location,
+                            lastCached: new Date()
+                        }
+                    }, {
+                        upsert: true
+                    });
+
                     console.dir(`Location ${location} -> SUCCESS`);
                 } catch (e) {
                     console.dir(`Location ${location} -> ERROR: ${e.message}`);
@@ -168,5 +209,6 @@ class Site {
     makeSiteFolder(cacheFolder) {
         return `${cacheFolder}${(0, _md2.default)(this._address)}/`;
     }
+
 }
 exports.default = Site;
