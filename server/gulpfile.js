@@ -26,9 +26,10 @@ gulp.task('cleanClient', function() {
         .pipe(clean());
 });
 
-// compile client js (es6)
+// compile client js (js)
 gulp.task('compileEs6Client', ['cleanClient'], function() {
-    return gulp.src(srcFolderClient+'/**/*.es6')
+    // vfs follows symlinks
+    return vfs.src(srcFolderClient+'/**/*.js')
         .pipe(plumber())
         .pipe(babel({
             presets: [
@@ -40,15 +41,7 @@ gulp.task('compileEs6Client', ['cleanClient'], function() {
                 }]
             ]
         }))
-        .pipe(gulp.dest(dstFolderClient));
-});
-
-// copy the other client js (plain)
-gulp.task('copyJsClient', ['cleanClient'], function() {
-    // vfs follows symlinks
-    return vfs.src([
-        srcFolderClient+'/**/*.js',
-    ]).pipe(vfs.dest(dstFolderClient));
+        .pipe(vfs.dest(dstFolderClient));
 });
 
 // compile less
@@ -77,9 +70,10 @@ gulp.task('cleanServer', function() {
         .pipe(clean());
 });
 
-// compile server js (es6)
+// compile server js (js)
 gulp.task('compileEs6Server', ['cleanServer'], function() {
-    return gulp.src(srcFolderServer+'/**/*.es6')
+    // vfs follows symlinks
+    return vfs.src(srcFolderServer+'/**/*.js')
         .pipe(plumber())
         .pipe(babel({
             presets: [
@@ -91,13 +85,7 @@ gulp.task('compileEs6Server', ['cleanServer'], function() {
                 }],
             ]
         }))
-        .pipe(gulp.dest(dstFolderServer));
-});
-
-// copy the other client js (plain)
-gulp.task('copyJsServer', ['cleanServer'], function() {
-    // vfs follows symlinks
-    return vfs.src(srcFolderServer+'/**/*.js').pipe(vfs.dest(dstFolderServer));
+        .pipe(vfs.dest(dstFolderServer));
 });
 
 // run the server
@@ -105,7 +93,8 @@ gulp.task('server', ['buildServer'], function() {
     if (node) node.kill();
     node = spawn('node', [dstFolderServer+'/index.js'], {stdio: 'inherit'});
     node.on('close', function (code) {
-        if (code === 8) {
+        if (code === 8)
+        {
             gulp.log('Error detected, waiting for changes...');
         }
     });
@@ -118,6 +107,6 @@ gulp.task('watch', function() {
     gulp.watch([srcFolderClient+'/**/*'], ['buildClient']);
     gulp.watch([srcFolderServer+'/**/*'], ['buildServer', 'server']);
 });
-gulp.task('buildClient', ['compileEs6Client', 'copyJsClient', 'compileLessClient', /*'copyCss'*/]);
-gulp.task('buildServer', ['compileEs6Server', 'copyJsServer']);
+gulp.task('buildClient', ['compileEs6Client', 'compileLessClient', /*'copyCss'*/]);
+gulp.task('buildServer', ['compileEs6Server',]);
 gulp.task('default', ['buildClient', 'buildServer', 'watch', 'server']);
