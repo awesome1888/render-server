@@ -38,14 +38,14 @@ var Application = function (_BaseApplication) {
         key: 'getRouteMap',
         value: function getRouteMap() {
             return [{
-                path: '/',
+                path: '/:url',
                 handler: this.processHome
             }];
         }
     }, {
         key: 'processHome',
         value: function processHome(req, res) {
-            res.asText().send(JSON.stringify(req.query)).end();
+            res.asText().send(JSON.stringify(req.query)).send("\n").send(req.protocol + '://' + req.get('host') + req.originalUrl).end();
         }
     }]);
 

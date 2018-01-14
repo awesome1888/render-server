@@ -14,7 +14,7 @@ export default class Application extends BaseApplication
     {
         return [
             {
-                path: '/',
+                path: '/:url',
                 handler: this.processHome,
             },
         ];
@@ -22,6 +22,6 @@ export default class Application extends BaseApplication
 
     processHome(req, res)
     {
-        res.asText().send(JSON.stringify(req.query)).end();
+        res.asText().send(JSON.stringify(req.query)).send("\n").send(req.protocol + '://' + req.get('host') + req.originalUrl).end();
     }
 }

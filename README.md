@@ -134,6 +134,11 @@ default_type text/plain;
 return 200 "is crawler: $is_crawler, user agent: $http_user_agent, $uri";
 ~~~~
 
+## Other
+~~~~
+http://localhost:11004/http%3A%2F%2Fforeignsky.ru%3Fasdfafads%3D1
+~~~~
+
 ## Copyright
 
 `awesome1888@gmail.com`, MIT License
