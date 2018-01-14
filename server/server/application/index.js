@@ -1,12 +1,9 @@
-"use strict";
+import BaseApplication from '../lib/application/index.js';
+import config from '../config.js';
+// import _ from '../lib/_.js';
+// import fs from 'fs';
 
-let BaseApplication = require('../lib/application/index.js');
-let config = require('../config.js');
-let _ = require('../lib/_.js');
-
-let fs = require('fs');
-
-class Application extends BaseApplication
+export default class Application extends BaseApplication
 {
     constructor()
     {
@@ -25,8 +22,6 @@ class Application extends BaseApplication
 
     processHome(req, res)
     {
-        res.asText().send('Arrows from the sky!').end();
+        res.asText().send(JSON.stringify(req.query)).end();
     }
 }
-
-module.exports = Application;

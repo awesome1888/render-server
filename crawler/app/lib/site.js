@@ -207,6 +207,4 @@ export default class Site
     {
         return `${cacheFolder}${md5(this._address)}/`;
     }
-
-
 }

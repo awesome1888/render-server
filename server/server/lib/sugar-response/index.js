@@ -1,9 +1,7 @@
-"use strict";
+import fs from 'fs';
+import _ from 'underscore';
 
-const fs = require('fs');
-const _ = require('underscore');
-
-class SugarResponse
+export default class SugarResponse
 {
     constructor(res)
     {
@@ -557,5 +555,3 @@ class SugarResponse
         return _.isString(value) && value.length;
     }
 }
-
-module.exports = SugarResponse;

@@ -1,6 +1,4 @@
-"use strict";
-
-let _ = require('underscore');
+import _ from 'underscore';
 
 _.mixin({
     /**
@@ -144,4 +142,4 @@ _.mixin({
     },
 });
 
-module.exports = _;
+export default _;

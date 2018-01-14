@@ -1,32 +1,55 @@
-"use strict";
+'use strict';
 
-let BaseApplication = require('../lib/application/index.js');
-let config = require('../config.js');
-let _ = require('../lib/_.js');
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 
-let fs = require('fs');
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-class Application extends BaseApplication
-{
-    constructor()
-    {
-        super(config);
+var _index = require('../lib/application/index.js');
+
+var _index2 = _interopRequireDefault(_index);
+
+var _config = require('../config.js');
+
+var _config2 = _interopRequireDefault(_config);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+// import _ from '../lib/_.js';
+// import fs from 'fs';
+
+var Application = function (_BaseApplication) {
+    _inherits(Application, _BaseApplication);
+
+    function Application() {
+        _classCallCheck(this, Application);
+
+        return _possibleConstructorReturn(this, (Application.__proto__ || Object.getPrototypeOf(Application)).call(this, _config2.default));
     }
 
-    getRouteMap()
-    {
-        return [
-            {
+    _createClass(Application, [{
+        key: 'getRouteMap',
+        value: function getRouteMap() {
+            return [{
                 path: '/',
-                handler: this.processHome,
-            },
-        ];
-    }
+                handler: this.processHome
+            }];
+        }
+    }, {
+        key: 'processHome',
+        value: function processHome(req, res) {
+            res.asText().send(JSON.stringify(req.query)).end();
+        }
+    }]);
 
-    processHome(req, res)
-    {
-        res.asText().send('Arrows from the sky!').end();
-    }
-}
+    return Application;
+}(_index2.default);
 
-module.exports = Application;
+exports.default = Application;

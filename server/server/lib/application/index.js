@@ -1,13 +1,11 @@
-"use strict";
-
-let http = require('http');
-let express = require('express');
-let bodyParser = require('body-parser');
-const SugarResponse = require('../sugar-response/index.js');
-// let _ = require('underscore');
+import http from 'http';
+import express from 'express';
+import bodyParser from 'body-parser';
+import SugarResponse from '../sugar-response/index.js';
+// import _ from '../lib/_.js';
 // let debug = require('debug')('node-express-gen:server');
 
-class Application
+export default class Application
 {
     // _settings = null;
     // _server = null;
@@ -180,8 +178,6 @@ class Application
         res.end('Internal server error');
     }
 }
-
-module.exports = Application;
 
 // error handlers
 
