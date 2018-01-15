@@ -46,7 +46,7 @@ map $args $is_crawler {
 
 map $is_crawler $xxxurl {
     default "";
-    1 "SHITTT";
+    1 "$scheme://$host$request_uri";
 }
 
 server {
@@ -110,15 +110,10 @@ server {
            expires 30d;
         }
 
-        set $url "";
-
         if ($is_crawler = 1) {
             rewrite .* /cache break;
-            set $url "$scheme://$host$request_uri";
             proxy_pass http://localhost:11004; # to the render server
         }
-
-        proxy_set_header Test $url;
 
         if ($is_crawler = 0) {
             set $proxy_host $host;
@@ -129,6 +124,7 @@ server {
         proxy_set_header Connection "upgrade";
         proxy_set_header Host $proxy_host;
         proxy_set_header X-Forwarded-For $remote_addr; # preserve client IP
+        proxy_set_header X-Crawled-Url $xxxurl;
 
         if ($is_crawler = 0) {
             proxy_pass http://localhost:11001; # to the project 
