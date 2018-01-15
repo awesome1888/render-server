@@ -14,6 +14,10 @@ var _config = require('../config.js');
 
 var _config2 = _interopRequireDefault(_config);
 
+var _2 = require('../lib/_.js');
+
+var _3 = _interopRequireDefault(_2);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -22,7 +26,6 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-// import _ from '../lib/_.js';
 // import fs from 'fs';
 
 var Application = function (_BaseApplication) {
@@ -45,7 +48,14 @@ var Application = function (_BaseApplication) {
     }, {
         key: 'processUrl',
         value: function processUrl(req, res) {
-            res.asHTML().send('<pre>').send(JSON.stringify(req.query)).send('</pre>').send('<br />').send(req.protocol + '://' + req.get('host') + req.originalUrl).send('<br />').send('<pre>').send(JSON.stringify(req.headers)).send('</pre>').end();
+            var headers = req.headers;
+            var crawledUrl = headers['x-crawled-url'];
+
+            if (!_3.default.isStringNotEmpty(crawledUrl)) {
+                res.s400().end();
+            } else {
+                res.asHTML().send('<pre>').send(crawledUrl).send('</pre>').end();
+            }
         }
     }]);
 

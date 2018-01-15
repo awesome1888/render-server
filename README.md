@@ -44,6 +44,11 @@ map $args $is_crawler {
     "~(^|&)_escaped_fragment_=" 1;
 }
 
+map $is_crawler $xxxurl {
+    default "";
+    1 "SHITTT";
+}
+
 server {
     listen 80;
     server_name foreign-sky.ru foreignsky.ru;
@@ -105,11 +110,15 @@ server {
            expires 30d;
         }
 
+        set $url "";
+
         if ($is_crawler = 1) {
             rewrite .* /cache break;
-            proxy_set_header X-Url $scheme://$host$request_uri?;
+            set $url "$scheme://$host$request_uri";
             proxy_pass http://localhost:11004; # to the render server
         }
+
+        proxy_set_header Test $url;
 
         if ($is_crawler = 0) {
             set $proxy_host $host;
