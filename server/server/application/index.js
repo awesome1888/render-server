@@ -14,14 +14,24 @@ export default class Application extends BaseApplication
     {
         return [
             {
-                path: '/:url',
-                handler: this.processHome,
+                path: '/cache',
+                handler: this.processUrl,
             },
         ];
     }
 
-    processHome(req, res)
+    processUrl(req, res)
     {
-        res.asText().send(JSON.stringify(req.query)).send("\n").send(req.protocol + '://' + req.get('host') + req.originalUrl).end();
+        res.asHTML()
+            .send('<pre>')
+            .send(JSON.stringify(req.query))
+            .send('</pre>')
+            .send('<br />')
+            .send(req.protocol + '://' + req.get('host') + req.originalUrl)
+            .send('<br />')
+            .send('<pre>')
+            .send(JSON.stringify(req.headers))
+            .send('</pre>')
+            .end();
     }
 }

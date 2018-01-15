@@ -106,7 +106,8 @@ server {
         }
 
         if ($is_crawler = 1) {
-            rewrite .* /$scheme://$host$request_uri? break;
+            rewrite .* /cache break;
+            proxy_set_header X-Url $scheme://$host$request_uri?;
             proxy_pass http://localhost:11004; # to the render server
         }
 
