@@ -13,7 +13,10 @@
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
     "lodash": "^4.17.4",
-    "underscore": "^1.8.3"
+    "md5": "^2.2.1",
+    "regenerator-runtime": "^0.11.1",
+    "underscore": "^1.8.3",
+    "url-parse": "^1.2.0"
   },
   "devDependencies": {
     "babel": "^6.23.0",

@@ -1,5 +1,9 @@
 import fs from 'fs';
 
+// to make babel-ed async functions work in nodejs 4.x or prior to
+// todo: prepend it automatically on build
+const regeneratorRuntime = require("regenerator-runtime");
+
 export default class FSHelper
 {
     static async isExists(folder)

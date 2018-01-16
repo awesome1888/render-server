@@ -1,9 +1,9 @@
-import md5 from 'md5';
 import fs from 'fs';
 
 import SitemapGetter from 'sitemap-getter';
 import _ from './_.js';
 import FSHelper from './fshelper.js';
+import Cache from './cache.js';
 
 import Collection from './mongodb/collection.js';
 
@@ -45,7 +45,7 @@ export default class Site
             return result;
         }, {});
 
-        const siteFolder = this.makeSiteFolder(cacheFolder);
+        const siteFolder = Cache.makeBaseUrlFolderPath(cacheFolder, this._address);
         await FSHelper.maybeMakeFolder(siteFolder);
 
         // locations = [{
@@ -151,13 +151,13 @@ export default class Site
                 // now get the content
 
                 // make the folder to place
-                const locationFolder = this.makeLocationSubFolder(siteFolder, location);
+                const locationFolder = Cache.makeLocationSubFolderPath(siteFolder, this._address, location);
                 await FSHelper.maybeMakeFolder(locationFolder);
 
                 const content = await page.content();
 
                 await new Promise((resolve, reject) => {
-                    const filePath = `${locationFolder}${md5(location)}`;
+                    const filePath = Cache.makeLocationFilePath(siteFolder, this._address, location);
                     fs.writeFile(filePath, content, (err) => {
                         if (err)
                         {
@@ -194,17 +194,5 @@ export default class Site
         await page.close();
 
         return 1;
-    }
-
-    makeLocationSubFolder(siteFolder, location)
-    {
-        location = FSHelper.secureName(location);
-
-        return `${siteFolder}${md5(location).substr(1, 3)}/`;
-    }
-
-    makeSiteFolder(cacheFolder)
-    {
-        return `${cacheFolder}${md5(this._address)}/`;
     }
 }

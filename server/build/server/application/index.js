@@ -18,6 +18,14 @@ var _2 = require('../lib/_.js');
 
 var _3 = _interopRequireDefault(_2);
 
+var _urlParse = require('url-parse');
+
+var _urlParse2 = _interopRequireDefault(_urlParse);
+
+var _cache = require('../lib/cache.js');
+
+var _cache2 = _interopRequireDefault(_cache);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -42,20 +50,47 @@ var Application = function (_BaseApplication) {
         value: function getRouteMap() {
             return [{
                 path: '/cache',
-                handler: this.processUrl
+                handler: this.readCache
             }];
         }
     }, {
-        key: 'processUrl',
-        value: function processUrl(req, res) {
+        key: 'readCache',
+        value: function readCache(req, res) {
             var headers = req.headers;
             var crawledUrl = headers['x-crawled-url'];
 
+            res.asHTML();
+
             if (!_3.default.isStringNotEmpty(crawledUrl)) {
-                res.s400().end();
-            } else {
-                res.asHTML().send('<pre>').send(crawledUrl).send('</pre>').end();
+                res.s400().send('No crawled URL specified').end();
+                return;
             }
+
+            if (!_3.default.isArrayNotEmpty(_config2.default.targets) || !_3.default.isStringNotEmpty(_config2.default.cacheFolder)) {
+                res.s500().end();
+                return;
+            }
+
+            var cUrl = new _urlParse2.default(crawledUrl);
+            var base = '' + cUrl.protocol + (cUrl.slashes ? '//' : '/') + cUrl.host;
+
+            var target = _config2.default.targets.find(function (address) {
+                return address.trim() === base;
+            });
+
+            if (!_3.default.isStringNotEmpty(target)) {
+                res.s400().send('Who are you and what do you want?').end();
+                return;
+            }
+
+            var location = '' + target + cUrl.pathname;
+
+            console.dir(target);
+            console.dir(cUrl.pathname);
+            console.dir(location);
+            console.dir(_cache2.default.makeLocationFilePath(_config2.default.cacheFolder, target, location));
+
+            res.send('<pre>').send(crawledUrl).send('</pre>').end();
         }
     }]);
 
