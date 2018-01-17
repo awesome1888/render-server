@@ -54,16 +54,6 @@ export default class Application extends BaseApplication
             return;
         }
 
-        const location = `${target}${cUrl.pathname}`;
-
-        console.dir(target);
-        console.dir(cUrl.pathname);
-        console.dir(location);
-        console.dir(Cache.makeLocationFilePath(config.cacheFolder, target, location));
-
-        res.send('<pre>')
-            .send(crawledUrl)
-            .send('</pre>')
-            .end();
+        res.streamFile(Cache.makeLocationFilePath(config.cacheFolder, target, `${target}${cUrl.pathname}`));
     }
 }

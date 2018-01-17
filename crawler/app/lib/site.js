@@ -151,13 +151,13 @@ export default class Site
                 // now get the content
 
                 // make the folder to place
-                const locationFolder = Cache.makeLocationSubFolderPath(siteFolder, this._address, location);
+                const locationFolder = Cache.makeLocationSubFolderPath(cacheFolder, this._address, location);
                 await FSHelper.maybeMakeFolder(locationFolder);
 
                 const content = await page.content();
 
                 await new Promise((resolve, reject) => {
-                    const filePath = Cache.makeLocationFilePath(siteFolder, this._address, location);
+                    const filePath = Cache.makeLocationFilePath(cacheFolder, this._address, location);
                     fs.writeFile(filePath, content, (err) => {
                         if (err)
                         {

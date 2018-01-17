@@ -80,7 +80,17 @@ var SugarResponse = function () {
                 source = source.replace(/\.+/g, '.');
             }
 
-            var p = new Promise(function (resolve, reject) {
+            var setError = function setError(e) {
+                if (e.code === 'ENOENT') {
+                    _this.s404();
+                } else if (e.code === 'EACCES') {
+                    _this.s403();
+                } else {
+                    _this.s500();
+                }
+            };
+
+            return new Promise(function (resolve, reject) {
                 var doStream = function doStream() {
                     var stream = source;
                     if (_this.isStringNotEmpty(source)) {
@@ -127,34 +137,21 @@ var SugarResponse = function () {
                 } else {
                     doStream();
                 }
-            });
-
-            var setError = function setError(e) {
-                if (e.code === 'ENOENT') {
-                    _this.s404();
-                } else if (e.code === 'EACCES') {
-                    _this.s403();
-                } else {
-                    _this.s500();
+            }).then(function () {
+                if (doEnd) {
+                    _this.end();
                 }
-            };
-
-            if (doEnd) {
-                p.then(function () {
-                    _this.end();
-                }).catch(function (result) {
-                    if (setErrorCode) {
-                        setError(result.error);
-                    }
-                    _this.end();
-                });
-            } else if (setErrorCode) {
-                p.catch(function (result) {
+            }).catch(function (result) {
+                if (setErrorCode) {
                     setError(result.error);
-                });
-            }
+                } else {
+                    throw result.error;
+                }
 
-            return p;
+                if (doEnd) {
+                    _this.end();
+                }
+            });
         }
 
         /**

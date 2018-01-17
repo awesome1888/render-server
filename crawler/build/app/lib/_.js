@@ -1,15 +1,23 @@
-"use strict";
+'use strict';
 
-let _ = require('underscore');
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 
-_.mixin({
+var _underscore = require('underscore');
+
+var _underscore2 = _interopRequireDefault(_underscore);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_underscore2.default.mixin({
     /**
      * Check if the argument is a string and it is not empty
      * @param {*} value
      * @returns {boolean}
      */
     isStringNotEmpty: function (value) {
-        return _.isString(value) && value.length > 0;
+        return _underscore2.default.isString(value) && value.length > 0;
     },
 
     /**
@@ -18,7 +26,7 @@ _.mixin({
      * @returns {boolean}
      */
     isArrayNotEmpty(value) {
-        return _.isArray(value) && value.length > 0;
+        return _underscore2.default.isArray(value) && value.length > 0;
     },
 
     /**
@@ -27,12 +35,12 @@ _.mixin({
      * @returns {boolean}
      */
     isObjectNotEmpty(value) {
-        return _.isObject(value) && Object.keys(value).length > 0;
+        return _underscore2.default.isObject(value) && Object.keys(value).length > 0;
     },
 
     makeMap(data, field, unsetKey) {
         unsetKey = unsetKey || false;
-        if (_.isArrayNotEmpty(data)) {
+        if (_underscore2.default.isArrayNotEmpty(data)) {
             return data.reduce((result, item) => {
                 const key = item[field];
                 if (unsetKey) {
@@ -60,7 +68,7 @@ _.mixin({
     },
 
     lCFirst(value) {
-        if (_.isStringNotEmpty(value)) {
+        if (_underscore2.default.isStringNotEmpty(value)) {
             return value.substr(0, 1).toLowerCase() + value.substr(1);
         }
 
@@ -68,7 +76,7 @@ _.mixin({
     },
 
     uCFirst(value) {
-        if (_.isStringNotEmpty(value)) {
+        if (_underscore2.default.isStringNotEmpty(value)) {
             return value.substr(0, 1).toUpperCase() + value.substr(1);
         }
 
@@ -76,21 +84,21 @@ _.mixin({
     },
 
     intersectKeys(one, two) {
-        if (!_.isObject(one)) {
+        if (!_underscore2.default.isObject(one)) {
             return one;
         }
-        if (!_.isObjectNotEmpty(two)) {
+        if (!_underscore2.default.isObjectNotEmpty(two)) {
             return {};
         }
 
-        return _.intersection(Object.keys(one), Object.keys(two)).reduce((result, key) => {
+        return _underscore2.default.intersection(Object.keys(one), Object.keys(two)).reduce((result, key) => {
             result[key] = one[key];
             return result;
         }, {});
     },
 
     isStringNotEmptyTrimmed(value) {
-        if (!_.isString(value)) {
+        if (!_underscore2.default.isString(value)) {
             return false;
         }
 
@@ -100,11 +108,11 @@ _.mixin({
     },
 
     isAgo(then, range, now = null) {
-        if (!_.isDate(then)) {
+        if (!_underscore2.default.isDate(then)) {
             return false;
         }
 
-        if (!_.isDate(now)) {
+        if (!_underscore2.default.isDate(now)) {
             now = new Date();
         }
 
@@ -119,4 +127,4 @@ _.mixin({
     }
 });
 
-module.exports = _;
+exports.default = _underscore2.default;

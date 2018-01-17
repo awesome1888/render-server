@@ -66,7 +66,22 @@ export default class SugarResponse
             source = source.replace(/\.+/g, '.');
         }
 
-        const p = new Promise((resolve, reject) => {
+        const setError = (e) => {
+            if (e.code === 'ENOENT')
+            {
+                this.s404();
+            }
+            else if (e.code === 'EACCES')
+            {
+                this.s403();
+            }
+            else
+            {
+                this.s500();
+            }
+        };
+
+        return new Promise((resolve, reject) => {
             const doStream = () => {
                 let stream = source;
                 if (this.isStringNotEmpty(source))
@@ -123,43 +138,26 @@ export default class SugarResponse
             {
                 doStream();
             }
-        });
-
-        const setError = (e) => {
-            if (e.code === 'ENOENT')
+        }).then(() => {
+            if (doEnd)
             {
-                this.s404();
+                this.end();
             }
-            else if (e.code === 'EACCES')
+        }).catch((result) => {
+            if (setErrorCode)
             {
-                this.s403();
+                setError(result.error);
             }
             else
             {
-                this.s500();
+                throw result.error;
             }
-        };
 
-        if (doEnd)
-        {
-            p.then(() => {
+            if (doEnd)
+            {
                 this.end();
-            }).catch((result) => {
-                if (setErrorCode)
-                {
-                    setError(result.error);
-                }
-                this.end();
-            });
-        }
-        else if(setErrorCode)
-        {
-            p.catch((result) => {
-                setError(result.error);
-            });
-        }
-
-        return p;
+            }
+        });
     }
 
     /**

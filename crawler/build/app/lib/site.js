@@ -4,10 +4,6 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _md = require('md5');
-
-var _md2 = _interopRequireDefault(_md);
-
 var _fs = require('fs');
 
 var _fs2 = _interopRequireDefault(_fs);
@@ -23,6 +19,10 @@ var _3 = _interopRequireDefault(_2);
 var _fshelper = require('./fshelper.js');
 
 var _fshelper2 = _interopRequireDefault(_fshelper);
+
+var _cache = require('./cache.js');
+
+var _cache2 = _interopRequireDefault(_cache);
 
 var _collection = require('./mongodb/collection.js');
 
@@ -66,7 +66,7 @@ class Site {
                 return result;
             }, {});
 
-            const siteFolder = _this.makeSiteFolder(cacheFolder);
+            const siteFolder = _cache2.default.makeBaseUrlFolderPath(cacheFolder, _this._address);
             yield _fshelper2.default.maybeMakeFolder(siteFolder);
 
             // locations = [{
@@ -157,13 +157,13 @@ class Site {
                     // now get the content
 
                     // make the folder to place
-                    const locationFolder = _this.makeLocationSubFolder(siteFolder, location);
+                    const locationFolder = _cache2.default.makeLocationSubFolderPath(cacheFolder, _this._address, location);
                     yield _fshelper2.default.maybeMakeFolder(locationFolder);
 
                     const content = yield page.content();
 
                     yield new Promise(function (resolve, reject) {
-                        const filePath = `${locationFolder}${(0, _md2.default)(location)}`;
+                        const filePath = _cache2.default.makeLocationFilePath(cacheFolder, _this._address, location);
                         _fs2.default.writeFile(filePath, content, function (err) {
                             if (err) {
                                 reject(err);
@@ -197,16 +197,5 @@ class Site {
             return 1;
         })();
     }
-
-    makeLocationSubFolder(siteFolder, location) {
-        location = _fshelper2.default.secureName(location);
-
-        return `${siteFolder}${(0, _md2.default)(location).substr(1, 3)}/`;
-    }
-
-    makeSiteFolder(cacheFolder) {
-        return `${cacheFolder}${(0, _md2.default)(this._address)}/`;
-    }
-
 }
 exports.default = Site;

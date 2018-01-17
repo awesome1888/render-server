@@ -83,14 +83,7 @@ var Application = function (_BaseApplication) {
                 return;
             }
 
-            var location = '' + target + cUrl.pathname;
-
-            console.dir(target);
-            console.dir(cUrl.pathname);
-            console.dir(location);
-            console.dir(_cache2.default.makeLocationFilePath(_config2.default.cacheFolder, target, location));
-
-            res.send('<pre>').send(crawledUrl).send('</pre>').end();
+            res.streamFile(_cache2.default.makeLocationFilePath(_config2.default.cacheFolder, target, '' + target + cUrl.pathname));
         }
     }]);
 
