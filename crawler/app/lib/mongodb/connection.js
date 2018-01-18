@@ -5,31 +5,26 @@ export default class Connection
     static async make(url)
     {
         return new Promise((resolve, reject) => {
-            MongoClient.connect(url, (err, client) => {
+            MongoClient.connect(url, (err, db) => {
                 if (err)
                 {
                     reject(err);
                 }
                 else
                 {
-                    resolve(new this(client));
+                    resolve(new this(db));
                 }
             });
         });
     }
 
-    constructor(client)
+    constructor(db)
     {
-        this._client = client;
-    }
-
-    getDatabase(dbName)
-    {
-        return this._client.db(dbName);
+        this._db = db;
     }
 
     disconnect()
     {
-        this._client.close();
+        this._db.close();
     }
 }

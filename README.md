@@ -140,6 +140,19 @@ default_type text/plain;
 return 200 "is crawler: $is_crawler, user agent: $http_user_agent, $uri";
 ~~~~
 
+## MongoDB setup
+
+~~~~
+use admin;
+db.auth('administrator', 'yyyyyyyyyyyy');
+use renderserver;
+db.createUser({
+    user: "renderserver",
+    pwd: "xxxxxxxxxxxxxxx",
+    roles: [ { role: "readWrite", db: "renderserver" } ]
+});
+~~~~
+
 ## Other
 ~~~~
 http://localhost:11004/http%3A%2F%2Fforeignsky.ru%3Fasdfafads%3D1

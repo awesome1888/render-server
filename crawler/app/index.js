@@ -19,13 +19,13 @@ puppeteer.launch().then(async (browser) => {
     const cacheFolder = config.cacheFolder;
     await FSHelper.maybeMakeFolder(cacheFolder);
 
-    const connection = await Connection.make(config.mongodbURL);
-    const db = connection.getDatabase(config.mongodbName);
+    const db = await Connection.make(config.mongodb);
 
     await Promise.all(sites.map((address) => {
         const site = new Site(address, {
             cacheFolder,
             collection: db.collection('site'),
+            timeout: config.crawlTimeout,
         });
         return site.crawl(browser).catch((e) => {
             console.dir(`Website ${address} -> ERROR: ${e.message}`);
@@ -34,6 +34,6 @@ puppeteer.launch().then(async (browser) => {
 
     console.dir('Finished');
 
-    connection.disconnect();
+    db.disconnect();
     browser.close();
 });
