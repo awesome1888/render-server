@@ -419,7 +419,7 @@ export default class SugarResponse
                 else
                 {
                     value.forEach((subValue) => {
-                        console.dir(`${name} ${subValue}`);
+                        // console.dir(`${name} ${subValue}`);
                         this._r.setHeader(name, subValue);
                     });
                 }
