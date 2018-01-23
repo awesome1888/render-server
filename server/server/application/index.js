@@ -27,6 +27,8 @@ export default class Application extends BaseApplication
         const headers = req.headers;
         const crawledUrl = headers['x-crawled-url'];
 
+        console.dir(`To crawl: ${crawledUrl}`);
+
         res.asHTML();
 
         if (!_.isStringNotEmpty(crawledUrl))
@@ -54,6 +56,9 @@ export default class Application extends BaseApplication
             return;
         }
 
-        res.streamFile(Cache.makeLocationFilePath(config.cacheFolder, target, `${target}${cUrl.pathname}`));
+        const path = Cache.makeLocationFilePath(config.cacheFolder, target, `${target}${cUrl.pathname}`);
+        console.dir(`Path: ${path}`);
+
+        res.streamFile(path);
     }
 }
