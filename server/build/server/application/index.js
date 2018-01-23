@@ -61,7 +61,8 @@ var Application = function (_BaseApplication) {
 
             // console.dir(`To crawl: ${crawledUrl}`);
 
-            res.asHTML();
+            // set to HTML, default utf8
+            res.asHTML().charset();
 
             if (!_3.default.isStringNotEmpty(crawledUrl)) {
                 res.s400().send('No crawled URL specified').end();
