@@ -17,23 +17,38 @@ const puppeteer = require('puppeteer');
 puppeteer.launch().then(async (browser) => {
 
     const cacheFolder = config.cacheFolder;
-    await FSHelper.maybeMakeFolder(cacheFolder);
+    let db;
 
-    const db = await Connection.make(config.mongodb);
+    try
+    {
+        await FSHelper.maybeMakeFolder(cacheFolder);
 
-    await Promise.all(sites.map((address) => {
-        const site = new Site(address, {
-            cacheFolder,
-            collection: db.collection('site'),
-            timeout: config.crawlTimeout,
-        });
-        return site.crawl(browser).catch((e) => {
-            console.dir(`Website ${address} -> ERROR: ${e.message}`);
-        });
-    }));
+        const db = await Connection.make(config.mongodb.connection, config.mongodb.database);
 
-    console.dir('Finished');
+        await Promise.all(sites.map((address) => {
+            const site = new Site(address, {
+                cacheFolder,
+                collection: db.collection('site'),
+                timeout: config.crawlTimeout,
+            });
+            return site.crawl(browser).catch((e) => {
+                console.dir(`Website ${address} -> ERROR: ${e.message}`);
+            });
+        }));
 
-    db.disconnect();
-    browser.close();
+        console.dir('Finished');
+
+        db.disconnect();
+        browser.close();
+    }
+    catch(e)
+    {
+        console.dir(`Error: ${e.message}`);
+
+        if (db)
+        {
+            db.disconnect();
+        }
+        browser.close();
+    }
 });

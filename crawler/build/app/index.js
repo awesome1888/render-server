@@ -39,25 +39,36 @@ puppeteer.launch().then((() => {
     var _ref = _asyncToGenerator(function* (browser) {
 
         const cacheFolder = _config2.default.cacheFolder;
-        yield _fshelper2.default.maybeMakeFolder(cacheFolder);
+        let db;
 
-        const connection = yield _connection2.default.make(_config2.default.mongodbURL);
-        const db = connection.getDatabase(_config2.default.mongodbName);
+        try {
+            yield _fshelper2.default.maybeMakeFolder(cacheFolder);
 
-        yield Promise.all(sites.map(function (address) {
-            const site = new _site2.default(address, {
-                cacheFolder,
-                collection: db.collection('site')
-            });
-            return site.crawl(browser).catch(function (e) {
-                console.dir(`Website ${address} -> ERROR: ${e.message}`);
-            });
-        }));
+            const db = yield _connection2.default.make(_config2.default.mongodb.connection, _config2.default.mongodb.database);
 
-        console.dir('Finished');
+            yield Promise.all(sites.map(function (address) {
+                const site = new _site2.default(address, {
+                    cacheFolder,
+                    collection: db.collection('site'),
+                    timeout: _config2.default.crawlTimeout
+                });
+                return site.crawl(browser).catch(function (e) {
+                    console.dir(`Website ${address} -> ERROR: ${e.message}`);
+                });
+            }));
 
-        connection.disconnect();
-        browser.close();
+            console.dir('Finished');
+
+            db.disconnect();
+            browser.close();
+        } catch (e) {
+            console.dir(`Error: ${e.message}`);
+
+            if (db) {
+                db.disconnect();
+            }
+            browser.close();
+        }
     });
 
     return function (_x) {
