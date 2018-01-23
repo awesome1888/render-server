@@ -59,7 +59,7 @@ var Application = function (_BaseApplication) {
             var headers = req.headers;
             var crawledUrl = headers['x-crawled-url'];
 
-            console.dir('To crawl: ' + crawledUrl);
+            // console.dir(`To crawl: ${crawledUrl}`);
 
             res.asHTML();
 
@@ -86,7 +86,7 @@ var Application = function (_BaseApplication) {
             }
 
             var path = _cache2.default.makeLocationFilePath(_config2.default.cacheFolder, target, '' + target + cUrl.pathname);
-            console.dir('Path: ' + path);
+            // console.dir(`Path: ${path}`);
 
             res.streamFile(path);
         }

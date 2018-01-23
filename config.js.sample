@@ -1,11 +1,13 @@
 module.exports = {
-    port: 3013,
+    port: 11004,
     useCluster: true,
 
     crawlTimeout: 5000,
     cacheFolder: '/home/sergey/crawled-pages/',
-    mongodbURL: 'mongodb://localhost:27017',
-    mongodbName: 'renderserver',
+    mongodb: {
+        connection: 'mongodb://localhost:27017/renderserver',
+        database: 'renderserver',
+    },
 
     // todo: later move to the database
     targets: [
