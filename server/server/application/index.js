@@ -29,7 +29,8 @@ export default class Application extends BaseApplication
 
         // console.dir(`To crawl: ${crawledUrl}`);
 
-        res.asHTML();
+        // set to HTML, default utf8
+        res.asHTML().charset();
 
         if (!_.isStringNotEmpty(crawledUrl))
         {
