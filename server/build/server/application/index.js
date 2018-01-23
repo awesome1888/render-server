@@ -59,6 +59,8 @@ var Application = function (_BaseApplication) {
             var headers = req.headers;
             var crawledUrl = headers['x-crawled-url'];
 
+            console.dir('To crawl: ' + crawledUrl);
+
             res.asHTML();
 
             if (!_3.default.isStringNotEmpty(crawledUrl)) {
@@ -83,7 +85,10 @@ var Application = function (_BaseApplication) {
                 return;
             }
 
-            res.streamFile(_cache2.default.makeLocationFilePath(_config2.default.cacheFolder, target, '' + target + cUrl.pathname));
+            var path = _cache2.default.makeLocationFilePath(_config2.default.cacheFolder, target, '' + target + cUrl.pathname);
+            console.dir('Path: ' + path);
+
+            res.streamFile(path);
         }
     }]);
 
