@@ -2,11 +2,22 @@
 
 ## Settings in config.js
 ~~~~
-{
-    // the port number this server runs at
-    port: 3012,
-    // add your own config here and access it through .getSettings() inside the app
-}
+module.exports = {
+    port: 11004,
+    useCluster: true,
+
+    crawlTimeout: 5000,
+    cacheFolder: '/home/renderserver/crawled-pages/',
+    mongodb: {
+        connection: 'mongodb://renderserver:password@localhost:27017/renderserver',
+        database: 'renderserver',
+    },
+
+    // todo: later move to the database
+    targets: [
+        'https://foreignsky.ru',
+    ],
+};
 ~~~~
 
 ## Nginx virtual host example for the client application
@@ -153,9 +164,44 @@ db.createUser({
 });
 ~~~~
 
-## Other
+## SystemD setup
+
 ~~~~
-http://localhost:11004/http%3A%2F%2Fforeignsky.ru%3Fasdfafads%3D1
+su root;
+vi /etc/systemd/system/render-server.service;
+~~~~
+
+~~~~
+[Unit]
+Description=Render Server
+[Service]
+Type=simple
+User=renderserver
+Group=renderserver
+Environment=NODE_ENV=production
+ExecStart=/usr/local/bin/node /home/renderserver/render-server/server/build/server/index.js &
+Requires=mongod.service
+After=network.target
+
+[Install]
+WantedBy=multi-user.target
+~~~~
+
+~~~~
+systemctl enable render-server
+systemctl start render-server
+systemctl list-units | grep render-server
+~~~~
+
+## Crawler cronjob
+
+~~~~
+su renderserver;
+crontab -e;
+~~~~
+
+~~~~
+05 00 * * * /usr/local/bin/node /home/renderserver/render-server/crawler/build/app/index.js
 ~~~~
 
 ## Copyright
