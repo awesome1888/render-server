@@ -1,4 +1,33 @@
 # Crawler + server for providing SSR to make dynamic JS applications crawlable 
+ 
+## Installation
+
+(todo)
+
+~~~~
+sudo yum install libXcomposite
+sudo yum install libXcursor
+sudo yum install libXdamage
+sudo yum install libXext
+sudo yum install libXi
+sudo yum install libXtst
+
+// somethig of this helped:
+yum -y install gcc gcc-c++ make rpm-build wget tar bzip2 gnutls-devel pam-devel dbus-devel avahi-devel systemd-devel system-config-printer-libs pygobject2 python-cups python-lxml foomatic-db-ppds ghostscript-cups cups-filesystem cups-filters cups-filters-libs cups-filters-libs cups-pdf cups-bjnp
+
+sudo yum install libXScrnSaver-1.2.2-6.1.el7.x86_64
+yum provides */libgconf-2.so.4
+
+sudo yum install GConf2
+sudo yum install at-spi2-atk
+sudo yum install gtk3
+
+export CHROME_DEVEL_SANDBOX=/home/renderserver/render-server/crawler/node_modules/puppeteer/.local-chromium/linux-515411/chrome-linux/chrome_sandbox
+chown root:root /home/renderserver/render-server/crawler/node_modules/puppeteer/.local-chromium/linux-515411/chrome-linux/chrome_sandbox
+chmod 4755 /home/renderserver/render-server/crawler/node_modules/puppeteer/.local-chromium/linux-515411/chrome-linux/chrome_sandbox
+
+yum provider */libatk-bridge-2.0.so.0
+~~~~
 
 ## Settings in config.js
 ~~~~
